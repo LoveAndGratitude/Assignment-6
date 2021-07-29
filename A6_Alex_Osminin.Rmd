@@ -1,0 +1,99 @@
+---
+title: "Trends in Global Warming"
+author: "Alex Osminin"
+date: "29/07/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) 
+knitr::opts_chunk$set(echo = TRUE)
+
+library(ggplot2)
+library(tidyverse)
+
+df <- read.csv("GISS_Zonal_Annual.csv") #reading in data
+```
+
+## Introduction
+The dataset contains global regions temperature differences (C) from a 30 year mean (years 1951 to 1980) and spans the years 1880 to 2020. 
+
+## **Results**
+
+```{r plot 1, echo=FALSE}
+# visualizing global temp difference change from 30 year mean from 1880 to present
+
+ggplot(df, aes(x=Year,y=Glob)) +
+  geom_point() +
+  geom_smooth()+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(plot.subtitle = element_text(hjust = 0.5))+
+  scale_x_continuous(limits = c(1880,2020), breaks=seq(1880,2020,10))+
+  labs(title = "Global temperature differences across years 1880 to 2020 \n from the 30 year mean of years 1950 to 1980 ",
+       x= "Year",
+       y= "Deviation from 30 year mean (C)")
+```
+
+<font size="3"> **Figure 1.** A yearly global differences in temperature from the 30 year mean (years 1951 to 1980) from 1880 to 2020. </font> 
+
+```{r plot 2, echo=FALSE}
+#boxplot of temp changes from 30 year mean in all global regions
+
+df_regions <- select(df, 5:15)
+
+ggplot(stack(df_regions), aes(x = ind, y = values))+
+  
+  geom_boxplot()+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(plot.subtitle = element_text(hjust = 0.5))+
+  theme(text = element_text(size=10),
+        axis.text.x = element_text(angle=90, hjust=1))+
+  theme(axis.title.x = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        axis.title.y = element_text(size = 10))+
+  scale_y_continuous(limits = c(-1,1))+
+  stat_summary(fun=mean, geom="point", shape=20, size=8, color="red", fill="red") +
+  
+  labs(title="Temperature deviations from the 30 year mean across 1880-2020 time period",
+       x="Global Region", 
+       y = "Temperature change (C)")
+```
+
+<font size="3"> **Figure 2.** A global region breakdown of yearly differences in temperature from the 30 year mean (years 1951 to 1980) from 1880 to 2020. Red circle represents the mean of temperature changes in a specific global region. </font>
+ 
+```{r plot 3, echo=FALSE}
+#last 40 years
+df_last40 <- filter(df, Year > 1980)
+df_last40 <- select(df_last40, 5:15)
+
+ggplot(stack(df_last40), aes(x = ind, y = values))+
+  
+  geom_boxplot()+
+  theme(plot.title = element_text(hjust = 0.5))+
+  theme(plot.subtitle = element_text(hjust = 0.5))+
+  scale_y_continuous(limits = c(-1,2))+
+  theme(text = element_text(size=10),
+        axis.text.x = element_text(angle=90, hjust=1))+
+  theme(axis.title.x = element_text(size = 10),
+        axis.text.x = element_text(size = 10),
+        axis.title.y = element_text(size = 10))+
+  stat_summary(fun=mean, geom="point", shape=20, size=6, color="red", fill="red") +
+  
+  labs(title="Temperature deviations over the last 40 years from the 30 year mean",
+       x="Global Region", 
+       y = "Temperature change (C)")
+```
+
+ <font size="3"> **Figure 3.** A global region breakdown of yearly differences in temperature from the 30 year mean (years 1951 to 1980) from 1981 to 2020. Red circle represents the mean of temperature changes in a specific global region. </font>
+
+## Conclusion
+The overall trend of global warming is evident from Figure 1 as differences in global yearly temperatures become increasingly positive compared to the 30 year mean of years 1951 to 1980. In the years 1880 to ~1950 the temperature differences from the 30 year mean were slightly negative, that is the temperatures before 1950s were lower than the mean. However, in the time period following the 30 year mean, that is 1980 and forward, the temperature differences from the 30 year mean were increasingly positive, meaning that on average global temperatures have been increasing.
+
+Individual global region breakdown (Figure 2) further confirms a general trend of warming temperatures as evidenced by the  red dots representing the mean of temperature differences from the 30 year mean (years 1950 to 1980). Most means appear to be trending above zero. This trend is offset by the cooler time period prior to 1950s.
+
+The warming trend becomes more pronounced when glancing at the data from the last 40 years alone as compared to the 30 year mean (Figure 3). The means of temperature changes from the 30 year mean are trending in the positive direction across all global regions. This is a concerning trend and a smoking gun of the current trends in global warming.
+
+
+
+
+
